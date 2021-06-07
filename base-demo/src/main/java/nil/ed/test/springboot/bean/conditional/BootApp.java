@@ -19,6 +19,8 @@ public class BootApp implements BeanPostProcessor,ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     public static void main(String[] args) throws Exception{
+//        System.setProperty("spring.banner.image.location", "/aa.jpg");
+        System.setProperty("spring.banner.location", "/spring.txt");
         SpringApplication.run(BootApp.class);
         ProxyConfig.TestInter testInter = ((ProxyConfig.TestInter) applicationContext.getBean("testObject"));
         System.out.println(testInter.getClass());

@@ -9,6 +9,5 @@ import org.springframework.stereotype.Indexed;
 public class CommandLineTest implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
-            System.out.println("ss");
     }
 }

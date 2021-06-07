@@ -1,0 +1,16 @@
+server:
+  port: 12001   # http 请求端口号
+  tomcat:
+    accesslog:  # access请求日志配置
+      enabled: true # 是否启用请求日志
+      directory: "/data/logs/adsystem-backend" # 请求日志目录
+      pattern: '%h %l %u %t "%r" %s %b %D'  # 请求日志格式
+      prefix: "access"  # 请求日志文件前缀
+      suffix: ".log"  # 请求日志文件后缀
+    max-threads: 1000 # 最大工作线程数
+    min-spare-threads: 100  # 最小空闲线程数，同ThreadPoolExecutor的corePoolSize
+    max-connections: 1000 # 最大连接数
+    accept-count: 200 # 请求队列长度，同ThreadPoolExecutor的workQueue，即tomcat无法立即处理的请求进入请求队列
+    uri-encoding: UTF-8
+    max-http-post-size: 10485760 # http 请求内容最大bytes
+#  shutdown-wait-seconds: 30
