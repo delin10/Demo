@@ -3,8 +3,10 @@ package nil.ed.test.easyexcel;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.ContentStyle;
 import com.alibaba.excel.annotation.write.style.HeadFontStyle;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
+import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 @ColumnWidth(value = 50)
 @HeadRowHeight(value = 15)
 @HeadFontStyle(fontHeightInPoints = 10)
-//@ContentStyle(horizontalAlignment = HorizontalAlignment.RIGHT)
+@ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER)
 public class DemoModel {
 
     @ExcelProperty("第一列")
