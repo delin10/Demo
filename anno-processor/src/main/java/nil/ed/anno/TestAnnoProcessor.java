@@ -1,12 +1,17 @@
 package nil.ed.anno;
 
-import javax.annotation.processing.*;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.TypeElement;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.StandardOpenOption;
 import java.util.Set;
+
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
 
 /**
  * @author lidelin.
@@ -20,12 +25,15 @@ public class TestAnnoProcessor extends AbstractProcessor {
         System.out.println(annotations);
         System.out.println(roundEnv);
         System.out.println("process");
-        try(OutputStream outputStream = new FileOutputStream(new File(System.getProperty("user.home") + "/delin/xx.txt"))) {
+
+        try(OutputStream outputStream =
+                    new FileOutputStream(new File(TestAnnoProcessor.class.getResource("/").getFile() + "/xx.txt"))) {
             outputStream.write("okkkkk".getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
+//        return true;
     }
 
 }

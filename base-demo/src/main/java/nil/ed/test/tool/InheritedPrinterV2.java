@@ -1,19 +1,6 @@
 package nil.ed.test.tool;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.dubbo.common.utils.IOUtils;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.annotation.ConfigurationClassPostProcessor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -30,24 +17,61 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
+
 /**
+ * 1. 需要配置JAVA_HOME.
+ * 2. 需要安装graphviz: brew install graphviz.
+ * 引入依赖：
+ *         <dependency>
+ *             <groupId>org.ow2.asm</groupId>
+ *             <artifactId>asm</artifactId>
+ *             <version>9.1</version>
+ *         </dependency>
+ *         <dependency>
+ *            <groupId>org.springframework</groupId>
+ *            <artifactId>spring-core</artifactId>
+ *            <version>5.2.0.RELEASE</version>
+ *         </dependency>
+ *         <dependency>
+ *             <groupId>commons-io</groupId>
+ *             <artifactId>commons-io</artifactId>
+ *             <version>2.6</version>
+ *         </dependency>
+ *
  * @author lidelin.
  */
 public class InheritedPrinterV2 {
     static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        Class<?> clazz = FactoryBean.class;
+        // 填写需要绘制依赖关系的类或者接口
+        Class<?> clazz = AbstractExecutorService.class;
         boolean subClass = false;
         int level = 0;
+        String projectDir = new File("").getAbsolutePath();
+        new File(projectDir + "/data").mkdirs();
         outPretty(level, clazz.getSimpleName());
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        JarFile jarFile = new JarFile("/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/lib/rt.jar");
+
+        // 扫描类文件
+        JarFile jarFile = new JarFile(System.getenv("JAVA_HOME") + "/jre/lib/rt.jar");
         Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
         List<String> jarClasses = new LinkedList<>();
         while (jarEntryEnumeration.hasMoreElements()) {
@@ -57,10 +81,15 @@ public class InheritedPrinterV2 {
                 jarClasses.add(name);
             }
         }
+
+        // 合并spring、sun class
         String[] resources = Stream.concat(jarClasses.stream(),
+                // 添加依赖对应的类
                 scan("classpath*:com/sun/**/*.class", "classpath*:org/springframework/**/*.class"))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
+
+        // 生成继承树
         ClassContainer container = new ClassContainer().setClazz(clazz.getCanonicalName());
         Map<String, ClassContainer> map = new HashMap<>();
         map.put(clazz.getCanonicalName(), container);
@@ -70,8 +99,10 @@ public class InheritedPrinterV2 {
             } catch (Throwable ne) {
             }
         }
-        ClassContainer childContainer = map.get(clazz.getCanonicalName());
+
+        // 控制台打印继承树
         traverse(container, 0);
+        // 生成graphviz文件
         StringBuilder builder = new StringBuilder("digraph {\n");
         if (subClass) {
             parentGraphviz(container, 0, builder);
@@ -79,13 +110,12 @@ public class InheritedPrinterV2 {
             graphviz(container, 0, builder);
         }
         builder.append("}\n");
-        System.out.println(builder);
-
-        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(Paths.get("/Users/admin/delin/test/graph.txt"), StandardOpenOption.TRUNCATE_EXISTING))) {
-            long len = IOUtils.write(writer, builder.toString());
-            System.out.println("write: " + len + ", text len: " + builder.length());
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(String.format(projectDir + "/data/graph-%s.txt", clazz.getSimpleName())), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
+            IOUtils.write(builder.toString(), writer);
         }
-        Process process = Runtime.getRuntime().exec("dot -Tpng /Users/admin/delin/test/graph.txt -o /Users/admin/delin/test/tree.png");
+
+        // 使用graphviz进行绘制
+        Process process = Runtime.getRuntime().exec(String.format("dot -Tpng %s/data/graph-%s.txt -o %s/data/tree-%s.png", projectDir, clazz.getSimpleName(), projectDir, clazz.getSimpleName()));
         InputStream inputStream = process.getErrorStream();
         process.waitFor();
         List<String> errors = org.apache.commons.io.IOUtils.readLines(inputStream);
@@ -208,9 +238,6 @@ public class InheritedPrinterV2 {
                 return;
             }
             MetadataReader reader = factory.getMetadataReader(target);
-            if (target.endsWith("ConfigurationClassPostProcessor")) {
-                System.out.println("ok");
-            }
             List<String> pending = new LinkedList<>();
             String superClass = reader.getClassMetadata().getSuperClassName();
             if (superClass != null && !superClass.endsWith(".Object")) {
@@ -258,8 +285,12 @@ public class InheritedPrinterV2 {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ClassContainer that = (ClassContainer) o;
             return Objects.equals(clazz, that.clazz);
         }

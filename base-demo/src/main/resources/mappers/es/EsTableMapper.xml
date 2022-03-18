@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="nil.ed.test.es.dao.EsTableMapper">
+    <resultMap id="resultMap" type="nil.ed.test.es.model.EsTable">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="big_content" property="bigContent" jdbcType="VARCHAR"/>
+        <result column="test_time" property="testTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="TABLE_NAME">
+        `t_es_table`
+    </sql>
+
+    <sql id="INSERT_COLS">
+        `content`,
+        `start_time`,
+        `end_time`,
+        `big_content`,
+        `test_time`
+    </sql>
+
+    <sql id="INSERT_VALUES">
+        #{content},
+        #{startTime},
+        #{endTime},
+        #{bigContent},
+        #{testTime}
+    </sql>
+
+    <sql id="SELECT_COLS">
+        `id`,
+        `content`,
+        `start_time`,
+        `end_time`,
+        `big_content`,
+        `test_time`
+    </sql>
+
+    <insert id="insert" parameterType="nil.ed.test.es.model.EsTable" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="TABLE_NAME"/>(<include refid="INSERT_COLS"/>)
+        values(<include refid="INSERT_VALUES"/>)
+    </insert>
+
+    <sql id="WHERE_ID">
+        <where>
+            `id` = #{id}
+        </where>
+    </sql>
+
+    <update id="update" parameterType="nil.ed.test.es.model.EsTable">
+        update <include refid="TABLE_NAME"/>
+        <set>
+            <if test="content != null">
+                `content` = #{content},
+            </if>
+            <if test="startTime != null">
+                `start_time` = #{startTime},
+            </if>
+            <if test="endTime != null">
+                `end_time` = #{endTime},
+            </if>
+            <if test="bigContent != null">
+                `big_content` = #{bigContent},
+            </if>
+            <if test="testTime != null">
+                `test_time` = #{testTime}
+            </if>
+        </set>
+        <include refid="WHERE_ID"/>
+    </update>
+
+    <select id="getList" resultMap="resultMap">
+        select <include refid="SELECT_COLS"/>
+        from  <include refid="TABLE_NAME"/>
+        <include refid="BASE_CONDITION"/>
+        <include refid="LIMIT"/>
+    </select>
+
+
+    <sql id="BASE_CONDITION">
+        <where>
+        </where>
+    </sql>
+
+    <sql id="LIMIT">
+        <if test="start > -1 and pageSize > 0">
+            LIMIT #{start}, #{pageSize}
+        </if>
+    </sql>
+
+</mapper>

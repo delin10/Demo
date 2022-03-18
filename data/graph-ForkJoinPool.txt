@@ -1,0 +1,5 @@
+digraph {
+AbstractExecutorService->ForkJoinPool
+AbstractExecutorService[shape=box,splines=ortho];
+ForkJoinPool[shape=box,splines=ortho];
+}

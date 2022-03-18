@@ -18,11 +18,13 @@ import java.time.LocalDateTime;
 @ColumnWidth(value = 50)
 @HeadRowHeight(value = 15)
 @HeadFontStyle(fontHeightInPoints = 10)
-//@ContentStyle(horizontalAlignment = HorizontalAlignment.RIGHT)
 public class DemoModel {
 
     @ExcelProperty("第一列")
     private String col1;
+
+    @ExcelProperty("第一列")
+    private String col11;
 
     @ExcelProperty("第二列")
     private Long col2;

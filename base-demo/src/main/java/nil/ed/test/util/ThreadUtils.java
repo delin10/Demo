@@ -1,5 +1,7 @@
 package nil.ed.test.util;
 
+import java.util.concurrent.TimeUnit;
+
 import nil.ed.test.util.function.ExceptionRunnable;
 
 /**
@@ -23,6 +25,14 @@ public class ThreadUtils {
         });
         t.start();
         return t;
+    }
+
+    public static void sleepQuietly(long timeout, TimeUnit unit) {
+        try {
+            unit.sleep(timeout);
+        } catch (InterruptedException ignored) {
+
+        }
     }
 
     public static void main(String[] args) {
