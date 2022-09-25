@@ -3,8 +3,9 @@ package nil.ed.test.easyexcel;
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.converters.date.DateStringConverter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
-import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.GlobalConfiguration;
+import com.alibaba.excel.metadata.data.ReadCellData;
+import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime convertToJavaData(CellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+    public LocalDateTime convertToJavaData(ReadCellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         Date date = DATE_STRING_CONVERTER.convertToJavaData(cellData, contentProperty, globalConfiguration);
         if (date != null) {
             return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
@@ -40,7 +41,7 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public CellData convertToExcelData(LocalDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+    public WriteCellData convertToExcelData(LocalDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         String text = "";
         if (value != null) {
             if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
@@ -49,6 +50,6 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
                 text = DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()).format(value);
             }
         }
-        return new CellData(text);
+        return new WriteCellData(text);
     }
 }

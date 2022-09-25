@@ -1,37 +1,27 @@
 package nil.ed.test.tool;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * @author lidelin.
  */
 public class SQLGenerator {
+    public static void main(String[] args) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
 
-    public static void main(String[] args) {
-
-        long[] sessionIds = new long[] {2000L, 2001L};
-
-//        StringBuilder builder = new StringBuilder();
-//        builder.append("insert into t_test(`sub_distribution_id`, `session_id`) values ");
-//        for (long sessionId : sessionIds) {
-//            long num = ThreadLocalRandom.current().nextLong(4000, 20000);
-//            for (int i = 0; i < num; ++i) {
-//                builder.append("(").append(sessionId).append(String.format("%05d", i)).append(",").append(sessionId).append("),\n");
-//            }
-//        }
-//        builder.delete(builder.length() - 2, builder.length()).append(";");
-//        System.out.println(builder.toString());
-        List<String> str = new LinkedList<>();
-        int start = 0;
-        int end = 500;
-        long sid = 2000;
-        for (int i = start; i < end; ++i) {
-            str.add(String.format("%d%05d", sid, i));
+        for (int i = 0; i < 800; ++i) {
+            stringBuilder.append("insert into `t_test`(session_id, sub_id) values");
+            for (int j = 1000; j < 2000; ++j) {
+                stringBuilder.append("(" + (1000 + i) + "," + Long.valueOf(i + String.valueOf(j)) + "),");
+            }
+            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
+            stringBuilder.append(";\n");
         }
-        System.out.println(String.join(",", str));
-
+        IOUtils.write(stringBuilder.toString(), Files.newOutputStream(Paths.get("/Users/lidelin/delin/Data/SQL", "test.sql"),StandardOpenOption.CREATE));
     }
-
 }

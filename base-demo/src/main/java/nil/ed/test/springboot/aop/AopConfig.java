@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 @Aspect
 public class AopConfig {
 
-    @Pointcut("@annotation(nil.ed.test.springboot.aop.AopConfig.Anno)")
+    @Pointcut("execution(public void insert(..))")
     public void pointcut() {
-
+        //@annotation(nil.ed.test.springboot.aop.AopConfig.Anno)
     }
 
     @Before("pointcut()")
@@ -46,15 +46,15 @@ public class AopConfig {
         System.out.println("before");
     }
 
-    @Bean
-    public ProxyFactoryBean proxyFactoryBean() throws ClassNotFoundException {
-        ProxyFactoryBean bean = new ProxyFactoryBean();
-        bean.setProxyTargetClass(false);
-        bean.setProxyInterfaces(new Class[]{TestBeanInterface.class});
-        bean.setInterceptorNames("simpleMethodInterceptor");
-        bean.addAdvisor(new TestIntroductionAdvisor());
-        return bean;
-    }
+//    @Bean
+//    public ProxyFactoryBean proxyFactoryBean() throws ClassNotFoundException {
+//        ProxyFactoryBean bean = new ProxyFactoryBean();
+//        bean.setProxyTargetClass(false);
+//        bean.setProxyInterfaces(new Class[]{TestBeanInterface.class});
+//        bean.setInterceptorNames("simpleMethodInterceptor");
+//        bean.addAdvisor(new TestIntroductionAdvisor());
+//        return bean;
+//    }
 
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
