@@ -15,6 +15,7 @@ import java.util.Arrays;
 public class AsmBaseDemo {
 
     public static void main(String[] args) throws IOException {
+        MethodHand
         visitClassDemo();
     }
 

@@ -31,7 +31,7 @@ public class SimpleBeanSource implements BeanSource {
         this.clazz = clazz;
         this.destroyMethodName = destroyMethodName;
         if (StringUtils.isNotBlank(destroyMethodName)) {
-            this.destroyMethod = MethodUtils.getMatchingMethod(clazz, destroyMethodName);
+            this.destroyMethod = MethodUtils.getMatchingAccessibleMethod(clazz, destroyMethodName);
             if (this.destroyMethod == null) {
                 throw new IllegalArgumentException("Destroy method cannot be found! [ destroyMethodName = " + destroyMethodName + " ]");
             }
@@ -102,8 +102,8 @@ public class SimpleBeanSource implements BeanSource {
         }
     }
     public static void main(String[] args) {
-        Method method = MethodUtils.getMatchingMethod(Test.class, "destroy");
-        Method method1 = MethodUtils.getMatchingMethod(Test.class, "test");
+        Method method = MethodUtils.getMatchingAccessibleMethod(Test.class, "destroy");
+        Method method1 = MethodUtils.getMatchingAccessibleMethod(Test.class, "test");
         System.out.println(method.getDeclaringClass());
         System.out.println(method1.getDeclaringClass());
     }

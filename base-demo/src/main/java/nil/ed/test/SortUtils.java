@@ -1,8 +1,10 @@
 package nil.ed.test;
 
+import com.sun.tools.jdi.VirtualMachineManagerImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.TypeConverterSupport;
+import sun.jvm.hotspot.jdi.VirtualMachineImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +51,7 @@ public class SortUtils {
         @Getter @Setter private int sort;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         TestSortableBean bean1 = new TestSortableBean();
         bean1.setId(1L);
         bean1.setSort(1);
@@ -74,6 +76,7 @@ public class SortUtils {
         bean5.setSort(0);
         sortSeq(beanList, bean5, 5, 1);
         System.out.println(Integer.MAX_VALUE);
+        Thread.sleep(1000000);
     }
 
 }

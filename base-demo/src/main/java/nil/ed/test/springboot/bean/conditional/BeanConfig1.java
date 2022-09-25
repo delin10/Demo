@@ -45,7 +45,7 @@ public class BeanConfig1 {
         System.out.println("Bloom过滤器序列化后的大小：" + outputStream.size());
         System.out.println("转成16进制串的长度：" + new String(Hex.encodeHex(outputStream.toByteArray())).getBytes().length);
         System.out.println("1_0000条素材MD5长度：" + DigestUtils.md5DigestAsHex("dasd".getBytes()).getBytes().length * 1_0000);
-        BloomFilter<String> f = BloomFilter.readFrom(new ByteArrayInputStream(Hex.decodeHex(new String(Hex.encodeHex(outputStream.toByteArray())).toCharArray())), Funnels.stringFunnel(StandardCharsets.UTF_8));
+        BloomFilter<String> f = null;//BloomFilter.readFrom(new ByteArrayInputStream(Hex.decodeHex(new String(Hex.encodeHex(outputStream.toByteArray())).toCharArray())), Funnels.stringFunnel(StandardCharsets.UTF_8));
         System.out.println(f.mightContain("123456"));
         for (int i = 0; i < 100_0000; i++) {
             filter.put(ThreadLocalRandom.current().nextInt(1000) + "");
