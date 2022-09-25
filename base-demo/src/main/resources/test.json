@@ -1,0 +1,13 @@
+{
+  "width": ${width},
+  "height": ${height},
+  "elements": [{"text": "${xxInput}",
+  "style": {
+  "font": "${xxFont}",
+  "fontSize": "${xxFontSize}",
+  "fontColor":"${xxFontColor}",
+  "x": ${xxX},
+  "y": ${xxY}
+  }
+}]
+}
